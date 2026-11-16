@@ -1,11 +1,91 @@
 {
   "version": 1,
   "tables": {
-    "notes": {
+    "connections": {
       "columns": {
         "id": {
           "type": "id",
           "primaryKey": true,
+          "notNull": true
+        },
+        "publicId": {
+          "type": "varchar",
+          "length": 64,
+          "notNull": true
+        },
+        "name": {
+          "type": "text",
+          "notNull": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "notNull": true,
+          "defaultValue": true
+        },
+        "tokenHash": {
+          "type": "varchar",
+          "length": 100,
+          "notNull": true
+        },
+        "onDelete": {
+          "type": "varchar",
+          "length": 16,
+          "notNull": true,
+          "defaultValue": "disable"
+        },
+        "adoptExisting": {
+          "type": "boolean",
+          "notNull": true,
+          "defaultValue": false
+        },
+        "allowAdmin": {
+          "type": "boolean",
+          "notNull": true,
+          "defaultValue": false
+        },
+        "defaultRoles": {
+          "type": "text",
+          "notNull": true,
+          "defaultValue": ""
+        },
+        "lastRequestAt": {
+          "type": "timestamp"
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        }
+      },
+      "indexes": [
+        {
+          "name": "scim_connections_public_id",
+          "columns": [
+            "publicId"
+          ],
+          "unique": true
+        }
+      ]
+    },
+    "users": {
+      "columns": {
+        "id": {
+          "type": "id",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "connectionId": {
+          "type": "integer",
+          "notNull": true
+        },
+        "scimId": {
+          "type": "varchar",
+          "length": 64,
           "notNull": true
         },
         "userId": {
@@ -13,9 +93,198 @@
           "length": 255,
           "notNull": true
         },
-        "text": {
+        "externalId": {
+          "type": "varchar",
+          "length": 255
+        },
+        "userName": {
+          "type": "varchar",
+          "length": 255,
+          "notNull": true
+        },
+        "active": {
+          "type": "boolean",
+          "notNull": true,
+          "defaultValue": true
+        },
+        "attributes": {
           "type": "text",
           "notNull": true
+        },
+        "version": {
+          "type": "integer",
+          "notNull": true,
+          "defaultValue": 1
+        },
+        "deletedAt": {
+          "type": "timestamp"
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        }
+      },
+      "indexes": [
+        {
+          "name": "scim_users_scim_id",
+          "columns": [
+            "connectionId",
+            "scimId"
+          ],
+          "unique": true
+        },
+        {
+          "name": "scim_users_user_id",
+          "columns": [
+            "userId"
+          ],
+          "unique": true
+        },
+        {
+          "name": "scim_users_user_name",
+          "columns": [
+            "connectionId",
+            "userName"
+          ]
+        },
+        {
+          "name": "scim_users_external_id",
+          "columns": [
+            "connectionId",
+            "externalId"
+          ]
+        }
+      ]
+    },
+    "groups": {
+      "columns": {
+        "id": {
+          "type": "id",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "connectionId": {
+          "type": "integer",
+          "notNull": true
+        },
+        "scimId": {
+          "type": "varchar",
+          "length": 64,
+          "notNull": true
+        },
+        "displayName": {
+          "type": "varchar",
+          "length": 255,
+          "notNull": true
+        },
+        "externalId": {
+          "type": "varchar",
+          "length": 255
+        },
+        "roleName": {
+          "type": "varchar",
+          "length": 255
+        },
+        "version": {
+          "type": "integer",
+          "notNull": true,
+          "defaultValue": 1
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "notNull": true,
+          "defaultNow": true
+        }
+      },
+      "indexes": [
+        {
+          "name": "scim_groups_scim_id",
+          "columns": [
+            "connectionId",
+            "scimId"
+          ],
+          "unique": true
+        },
+        {
+          "name": "scim_groups_display_name",
+          "columns": [
+            "connectionId",
+            "displayName"
+          ]
+        }
+      ]
+    },
+    "group_members": {
+      "columns": {
+        "id": {
+          "type": "id",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "groupId": {
+          "type": "integer",
+          "notNull": true
+        },
+        "memberId": {
+          "type": "integer",
+          "notNull": true
+        }
+      },
+      "indexes": [
+        {
+          "name": "scim_group_members_pair",
+          "columns": [
+            "groupId",
+            "memberId"
+          ],
+          "unique": true
+        },
+        {
+          "name": "scim_group_members_member",
+          "columns": [
+            "memberId"
+          ]
+        }
+      ]
+    },
+    "events": {
+      "columns": {
+        "id": {
+          "type": "id",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "connectionId": {
+          "type": "integer",
+          "notNull": true
+        },
+        "action": {
+          "type": "varchar",
+          "length": 32,
+          "notNull": true
+        },
+        "target": {
+          "type": "varchar",
+          "length": 255
+        },
+        "ok": {
+          "type": "boolean",
+          "notNull": true,
+          "defaultValue": true
+        },
+        "detail": {
+          "type": "text"
         },
         "createdAt": {
           "type": "timestamp",
@@ -25,8 +294,11 @@
       },
       "indexes": [
         {
-          "name": "idx_p_hello_world_notes_user_id",
-          "columns": ["userId"]
+          "name": "scim_events_connection",
+          "columns": [
+            "connectionId",
+            "id"
+          ]
         }
       ]
     }

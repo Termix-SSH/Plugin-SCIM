@@ -1,24 +1,131 @@
 {
   "$schema": "https://raw.githubusercontent.com/Termix-SSH/Termix/main/scripts/authz/authz.schema.json",
-  "seed": [
-    {
-      "as": "owner",
-      "method": "POST",
-      "path": "/plugin-api/hello-world/notes",
-      "body": { "text": "authz-own-note" }
-    }
-  ],
+  "seed": [],
   "routes": {
-    "GET /plugin-api/hello-world/notes": {
+    "GET /plugin-api/scim/connections/:id/events": {
       "access": "user",
-      "permission": "hello-world.use",
-      "filtered": true,
-      "note": "Lists only the caller's own notes"
+      "permission": "scim.manage"
     },
-    "POST /plugin-api/hello-world/notes": {
+    "PUT /plugin-api/scim/connections/:id/groups/:groupId": {
       "access": "user",
-      "permission": "hello-world.use",
-      "body": { "text": "authz" }
+      "permission": "scim.manage"
+    },
+    "GET /plugin-api/scim/connections/:id/groups": {
+      "access": "user",
+      "permission": "scim.manage"
+    },
+    "POST /plugin-api/scim/connections/:id/token": {
+      "access": "user",
+      "permission": "scim.manage"
+    },
+    "DELETE /plugin-api/scim/connections/:id": {
+      "access": "user",
+      "permission": "scim.manage",
+      "destructive": true
+    },
+    "PUT /plugin-api/scim/connections/:id": {
+      "access": "user",
+      "permission": "scim.manage"
+    },
+    "GET /plugin-api/scim/connections": {
+      "access": "user",
+      "permission": "scim.manage"
+    },
+    "POST /plugin-api/scim/connections": {
+      "access": "user",
+      "permission": "scim.manage",
+      "body": {
+        "name": "authz"
+      }
+    },
+    "GET /plugin-api/scim/roles": {
+      "access": "user",
+      "permission": "scim.manage"
+    },
+    "DELETE /plugin-api/scim/v2/:connection/Groups/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Groups/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "PATCH /plugin-api/scim/v2/:connection/Groups/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "PUT /plugin-api/scim/v2/:connection/Groups/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Groups": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "POST /plugin-api/scim/v2/:connection/Groups": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/ResourceTypes/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/ResourceTypes": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Schemas/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Schemas": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/ServiceProviderConfig": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "DELETE /plugin-api/scim/v2/:connection/Users/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Users/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "PATCH /plugin-api/scim/v2/:connection/Users/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "PUT /plugin-api/scim/v2/:connection/Users/:id": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "GET /plugin-api/scim/v2/:connection/Users": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+    },
+    "POST /plugin-api/scim/v2/:connection/Users": {
+      "access": "public",
+      "allowed": "any",
+      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
     }
   }
 }

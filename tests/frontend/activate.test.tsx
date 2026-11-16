@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import {
   renderWithApp,
   type RenderedPluginApp,
@@ -18,53 +18,118 @@ afterEach(async () => {
   rendered = null;
 });
 
+const connection = {
+  id: 3,
+  name: "Entra ID",
+  enabled: true,
+  onDelete: "disable",
+  adoptExisting: false,
+  allowAdmin: false,
+  defaultRoles: "",
+  lastRequestAt: null,
+  baseUrl: "https://termix.example/plugin-api/scim/v2/abc",
+  userCount: 2,
+  groupCount: 1,
+};
+
+function apiWith(overrides: Record<string, unknown> = {}) {
+  const get = vi.fn(async (path: string) => {
+    if (path === "/connections")
+      return { data: { supported: true, connections: [connection] } };
+    if (path === "/roles")
+      return {
+        data: { roles: [{ name: "operator", displayName: "Operator" }] },
+      };
+    if (path.endsWith("/groups")) {
+      return {
+        data: {
+          groups: [
+            { id: 9, displayName: "Ops", roleName: null, memberCount: 4 },
+          ],
+        },
+      };
+    }
+    if (path.endsWith("/events")) return { data: { events: [] } };
+    return { data: {} };
+  });
+  return {
+    get,
+    post: vi.fn(),
+    put: vi.fn(async () => ({ data: { connection } })),
+    delete: vi.fn(),
+    ...overrides,
+  };
+}
+
 describe(`${manifest.id} activate`, () => {
-  it("registers the rail item and tab", async () => {
+  it("registers only the connections setting", async () => {
     rendered = await renderWithApp(plugin, { manifest, locales });
-    expect(rendered.registered.tabs()).toEqual(["hello-world"]);
-    expect(rendered.registered.railItems()).toEqual([
-      expect.objectContaining({
-        id: "hello-world",
-        permission: "hello-world.use",
-      }),
-    ]);
+    expect(rendered.registered.settingsComponents()).toEqual(["connections"]);
   });
 
-  it("shows the greeting and notes", async () => {
+  it("lists connections with their counts", async () => {
     rendered = await renderWithApp(plugin, {
       manifest,
       locales,
-      api: {
-        get: vi.fn(async () => ({
-          data: {
-            greeting: "Hi there",
-            notes: [{ id: 1, text: "first", createdAt: "" }],
-          },
-        })),
-      } as never,
+      api: apiWith() as never,
     });
-    rendered.renderTab("hello-world", { isVisible: true });
-    expect(await screen.findByText("Hi there")).toBeTruthy();
-    expect(screen.getByText("first")).toBeTruthy();
+    rendered.renderSettingsComponent("connections");
+    expect(await screen.findByText("Entra ID")).toBeTruthy();
+    expect(
+      screen.getByText(/2 users \| 1 group \| No requests yet/),
+    ).toBeTruthy();
   });
 
-  it("shows an error when a note cannot be saved", async () => {
+  it("shows the token once after making a connection", async () => {
+    const post = vi.fn(async () => ({
+      data: { connection, token: "scim_secret" },
+    }));
+    const api = apiWith({ post });
     rendered = await renderWithApp(plugin, {
       manifest,
       locales,
-      api: {
-        get: vi.fn(async () => ({ data: { greeting: "Hello", notes: [] } })),
-        post: vi.fn(async () => {
-          throw new Error("offline");
-        }),
-      } as never,
+      api: api as never,
     });
-    rendered.renderTab("hello-world", { isVisible: true });
-    await screen.findByText(locales.tab.empty);
-    fireEvent.change(screen.getByPlaceholderText(locales.tab.placeholder), {
-      target: { value: "note" },
+    rendered.renderSettingsComponent("connections");
+    await screen.findByText("Entra ID");
+    fireEvent.click(screen.getByText(locales.connections.add));
+    fireEvent.change(
+      await screen.findByPlaceholderText(locales.connections.namePlaceholder),
+      {
+        target: { value: "Okta" },
+      },
+    );
+    fireEvent.click(screen.getByText(locales.connections.save));
+    await waitFor(() => expect(post).toHaveBeenCalled());
+    const [path, body] = post.mock.calls[0] as unknown as [
+      string,
+      Record<string, unknown>,
+    ];
+    expect(path).toBe("/connections");
+    expect(body).toMatchObject({
+      name: "Okta",
+      onDelete: "disable",
+      adoptExisting: false,
     });
-    fireEvent.click(screen.getByText(locales.tab.add));
-    expect(await screen.findByText(locales.tab.error)).toBeTruthy();
+    expect(await screen.findByDisplayValue("scim_secret")).toBeTruthy();
+  });
+
+  it("maps a group to a role from the editor", async () => {
+    const api = apiWith();
+    rendered = await renderWithApp(plugin, {
+      manifest,
+      locales,
+      api: api as never,
+    });
+    rendered.renderSettingsComponent("connections");
+    fireEvent.click(await screen.findByTitle(locales.connections.edit));
+    expect(await screen.findByText("Ops")).toBeTruthy();
+    expect(screen.getByDisplayValue(connection.baseUrl)).toBeTruthy();
+  });
+
+  it("removes everything on deactivate", async () => {
+    const app = await renderWithApp(plugin, { manifest, locales });
+    await app.deactivate();
+    expect(app.registered.settingsComponents()).toEqual([]);
   });
 });
