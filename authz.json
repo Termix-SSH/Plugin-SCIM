@@ -4,28 +4,59 @@
   "routes": {
     "GET /plugin-api/scim/connections/:id/events": {
       "access": "user",
-      "permission": "scim.manage"
+      "permission": "scim.manage",
+      "params": {
+        "id": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "PUT /plugin-api/scim/connections/:id/groups/:groupId": {
       "access": "user",
-      "permission": "scim.manage"
+      "permission": "scim.manage",
+      "params": {
+        "id": "=authz-none",
+        "groupId": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "GET /plugin-api/scim/connections/:id/groups": {
       "access": "user",
-      "permission": "scim.manage"
+      "permission": "scim.manage",
+      "params": {
+        "id": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "POST /plugin-api/scim/connections/:id/token": {
       "access": "user",
-      "permission": "scim.manage"
+      "permission": "scim.manage",
+      "params": {
+        "id": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "DELETE /plugin-api/scim/connections/:id": {
       "access": "user",
       "permission": "scim.manage",
-      "destructive": true
+      "destructive": true,
+      "params": {
+        "id": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "PUT /plugin-api/scim/connections/:id": {
       "access": "user",
-      "permission": "scim.manage"
+      "permission": "scim.manage",
+      "params": {
+        "id": "=authz-none"
+      },
+      "allowed": "any",
+      "note": "No SCIM connections in the test data; only permission refusals are checked"
     },
     "GET /plugin-api/scim/connections": {
       "access": "user",
@@ -44,88 +75,122 @@
     },
     "DELETE /plugin-api/scim/v2/:connection/Groups/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Groups/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "PATCH /plugin-api/scim/v2/:connection/Groups/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "PUT /plugin-api/scim/v2/:connection/Groups/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Groups": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "POST /plugin-api/scim/v2/:connection/Groups": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/ResourceTypes/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/ResourceTypes": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Schemas/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Schemas": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/ServiceProviderConfig": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "DELETE /plugin-api/scim/v2/:connection/Users/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Users/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "PATCH /plugin-api/scim/v2/:connection/Users/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "PUT /plugin-api/scim/v2/:connection/Users/:id": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "GET /plugin-api/scim/v2/:connection/Users": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     },
     "POST /plugin-api/scim/v2/:connection/Users": {
       "access": "public",
-      "allowed": "any",
-      "note": "Public SCIM route that checks the connection's own bearer token; no caller in the matrix has one"
+      "note": "Public SCIM route that checks the connection's own bearer token, so every caller here gets 401",
+      "expect": {
+        "anon": "any"
+      }
     }
   }
 }
