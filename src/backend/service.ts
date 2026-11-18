@@ -353,7 +353,6 @@ export function createService(deps: {
             username: profile.userName,
             displayName: profile.displayName,
             email: profile.email,
-            linkByEmail: true,
           });
         } catch (error) {
           usersError(error);

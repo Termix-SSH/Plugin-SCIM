@@ -37,13 +37,13 @@ export async function activate(ctx: PluginContext) {
 
   // SCIM sends application/scim+json, which core's parser skips, and its
   // token in the Authorization header, which core passes only on these
-  // public routes when asked (Termix 26.11.2).
-  const options = {
+  // public routes when asked.
+  const options: PluginRouterOptions = {
     public: SCIM_PATHS,
     rawBody: true,
     publicRateLimit: 3000,
     publicAuthorization: true,
-  } as PluginRouterOptions;
+  };
   const router = ctx.http.router<Router>(options);
   router.use(jsonBody);
 

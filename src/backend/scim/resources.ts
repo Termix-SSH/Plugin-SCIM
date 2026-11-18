@@ -14,6 +14,9 @@ const SCHEMA_SCHEMA = "urn:ietf:params:scim:schemas:core:2.0:Schema";
 
 export const MAX_PAGE = 200;
 const MAX_NAME_LENGTH = 255;
+/** Termix keeps display names this long at most. */
+const MAX_DISPLAY_NAME = 64;
+const MAX_EMAIL = 254;
 
 type Json = Record<string, unknown>;
 
@@ -70,25 +73,25 @@ function primaryEmail(attributes: Json): string | null {
     ) ??
     items[0];
   const value = pick ? text(getAttr(pick, "value")).toLowerCase() : "";
-  return /^[^\s@]+@[^\s@]+$/.test(value)
-    ? value.slice(0, MAX_NAME_LENGTH)
+  return value.length <= MAX_EMAIL && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    ? value
     : null;
 }
 
 function displayNameOf(attributes: Json): string | null {
   const direct = text(getAttr(attributes, "displayName"));
-  if (direct) return direct.slice(0, MAX_NAME_LENGTH);
+  if (direct) return direct.slice(0, MAX_DISPLAY_NAME);
   const name = getAttr(attributes, "name");
   if (isObject(name)) {
     const formatted = text(getAttr(name, "formatted"));
-    if (formatted) return formatted.slice(0, MAX_NAME_LENGTH);
+    if (formatted) return formatted.slice(0, MAX_DISPLAY_NAME);
     const joined = [
       text(getAttr(name, "givenName")),
       text(getAttr(name, "familyName")),
     ]
       .filter(Boolean)
       .join(" ");
-    if (joined) return joined.slice(0, MAX_NAME_LENGTH);
+    if (joined) return joined.slice(0, MAX_DISPLAY_NAME);
   }
   return null;
 }

@@ -134,7 +134,6 @@ describe("SCIM users", () => {
       email: "bob@example.com",
       disabled: false,
     });
-    expect(server.users.linkByEmail.has(account!.id)).toBe(true);
 
     const raw = server.db.sqlite
       .prepare("SELECT attributes FROM p_scim_users")

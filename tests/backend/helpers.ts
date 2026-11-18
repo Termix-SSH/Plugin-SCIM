@@ -27,7 +27,6 @@ function coded(code: string, message: string): Error {
 export class FakeUsers implements UsersApi {
   accounts = new Map<string, TermixUser>();
   roles = new Map<string, Set<string>>();
-  linkByEmail = new Set<string>();
   knownRoles: TermixRole[] = [
     { name: "admin", displayName: "Admin", isSystem: true },
     { name: "user", displayName: "User", isSystem: true },
@@ -44,6 +43,7 @@ export class FakeUsers implements UsersApi {
       isAdmin: false,
       disabled: false,
       disabledReason: null,
+      managedBy: null,
       ...account,
     };
     this.accounts.set(user.id, user);
@@ -72,7 +72,6 @@ export class FakeUsers implements UsersApi {
     username: string;
     displayName?: string | null;
     email?: string | null;
-    linkByEmail?: boolean;
   }) {
     if (await this.findByUsername(input.username))
       throw coded("username_taken", "taken");
@@ -83,7 +82,6 @@ export class FakeUsers implements UsersApi {
       displayName: input.displayName ?? null,
       email: input.email ?? null,
     });
-    if (input.linkByEmail) this.linkByEmail.add(user.id);
     return { ...user };
   }
   async update(
@@ -190,6 +188,9 @@ export async function startServer(
           value.bind(users);
       }
     }
+  } else {
+    // Like a Termix from before plugin API 2.9.
+    (mock.ctx.users as unknown as Record<string, unknown>).create = undefined;
   }
 
   const { activate } = await import("../../src/backend/index.js");
